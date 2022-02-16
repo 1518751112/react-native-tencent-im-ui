@@ -1,8 +1,8 @@
 {
-  "name": "react-native-tencent-im-ui",
+  "name": "@tg1518/react-native-tencent-im-ui",
   "title": "React Native Tencent IM With UI ",
-  "version": "1.1.3",
-  "description": "腾讯云即时通信 IM 服务的react-native，使用原生ui版本的sdk",
+  "version": "1.1.4",
+  "description": "腾讯云即时通信 IM 服务的react-native，使用原生ui版本的sdk，修改了原作者的依赖冲突【1.1.3有冲突】",
   "main": "index.js",
   "files": [
     "README.md",
@@ -22,8 +22,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mengyou658/react-native-tencent-im-ui.git",
-    "baseUrl": "https://github.com/mengyou658/react-native-tencent-im-ui"
+    "url": "git+https://github.com/1518751112/react-native-tencent-im-ui.git",
+    "baseUrl": "https://github.com/1518751112/react-native-tencent-im-ui"
   },
   "keywords": [
     "react-native",

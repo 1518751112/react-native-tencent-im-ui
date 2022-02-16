@@ -1,4 +1,4 @@
-# react-native-tencent-im-ui 腾讯云即时通信 IM 服务的react-native，使用原生ui版本得sdk
+# react-native-tencent-im-ui 腾讯云即时通信 IM 服务的react-native，使用原生ui版本得sdk修改了原作者的依赖冲突
 
 起因，项目中需要用到基础的im功能（聊天和聊天列表），晚上搜了一圈也没有找到，技术栈已经定好，也只能硬着头皮搞了。
 
@@ -6,7 +6,7 @@
 
 当前基于 TIMSDK UI版本 标准版 5.0.6 @2020.09.18
 
-项目地址：[https://github.com/mengyou658/react-native-tencent-im-ui](https://github.com/mengyou658/react-native-tencent-im-ui)
+项目地址：[https://github.com/1518751112/react-native-tencent-im-ui](https://github.com/1518751112/react-native-tencent-im-ui)
 
 ## 一、支持功能
 
