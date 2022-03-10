@@ -4,14 +4,30 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.v2.V2TIMCallback;
+import com.tencent.imsdk.v2.V2TIMConversation;
+import com.tencent.imsdk.v2.V2TIMGroupMemberInfo;
+import com.tencent.imsdk.v2.V2TIMManager;
+import com.tencent.imsdk.v2.V2TIMMessage;
+import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
+import com.tencent.imsdk.v2.V2TIMUserInfo;
+import com.tencent.imsdk.v2.V2TIMValueCallback;
 import com.tencent.qcloud.tim.uikit.TUIKit;
+import com.tencent.qcloud.tim.uikit.base.IMEventListener;
 import com.tencent.qcloud.tim.uikit.base.IUIKitCallBack;
 import com.tencent.qcloud.tim.uikit.config.GeneralConfig;
 import com.tencent.qcloud.tim.uikit.config.TUIKitConfigs;
@@ -21,6 +37,7 @@ import com.yunchao.tencentim.activity.ChatActivity;
 import com.yunchao.tencentim.common.Constants;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.LogRecord;
 
@@ -31,6 +48,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         super(reactContext);
     }
 
+    private static ReactApplicationContext reactContext;
 
     @Override
     public String getName() {
@@ -46,6 +64,11 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         return TUIKit.getConfigs();
     }
 
+    private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
+    }
+
     @ReactMethod
     public void initSdk(final int sdkAppId) {
         final Activity activity = getCurrentActivity();
@@ -56,6 +79,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
                     TUIKit.init(IMApplication.getContext(), sdkAppId, getConfigs());
                 }
             });
+            reactContext = this.getReactApplicationContext();
         }
     }
 
@@ -64,12 +88,12 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         final String loginUser = TIMManager.getInstance().getLoginUser();
         TIMManager.getInstance().logout(new TIMCallBack() {
             @Override
-            public void onError(int i, String s) {
-                Map<String, Object> result = new HashMap<>(3);
+            public void onError(int i, String s) {Map<String, Object> result = new HashMap<>(3);
                 result.put("module", "onError");
                 result.put("code", -9999);
                 result.put("desc", "登出失败");
                 promise.reject(result.toString(), new RuntimeException(s));
+
             }
 
             @Override
@@ -126,5 +150,59 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
             activity.startActivity(intent);
         }
     }
+
+    @ReactMethod
+    public void joinGroup(final String groupID,final Promise promise) {
+        V2TIMManager.getInstance().joinGroup(groupID, "", new V2TIMCallback() {
+            @Override
+            public void onError(int code, String desc) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",code);
+                params.putString("desc",desc);
+                promise.reject(params.toString(),new RuntimeException(desc));
+            }
+
+            @Override
+            public void onSuccess() {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",0);
+                params.putString("desc","加入群成功");
+                promise.resolve(params);
+            }
+        });
+    }
+
+
+    /**
+     *  发送群聊普通文本消息（最大支持 8KB）
+     * @param text 内容
+     * @param groupID 群聊id
+     * @param priority 发送等级 0：云端按默认优先级传输，适用于在群里发送非重要消息，比如观众发送的弹幕消息等， 1：云端会优先传输，适用于在群里发送重要消息，比如主播发送的文本消息等。
+     * @param promise 回调
+     */
+    @ReactMethod
+    public void sendGroupTextMessage(final String text,final String groupID,int priority,final Promise promise) {
+        priority = priority>=1? V2TIMMessage.V2TIM_PRIORITY_HIGH:V2TIMMessage.V2TIM_PRIORITY_NORMAL;
+
+        V2TIMManager.getInstance().sendGroupTextMessage(text, groupID, priority, new V2TIMValueCallback<V2TIMMessage>() {
+            @Override
+            public void onError(int code, String desc) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code", code);
+                params.putString("desc", desc);
+                promise.reject(params.toString(), new RuntimeException(desc));
+            }
+
+            @Override
+            public void onSuccess(V2TIMMessage v2TIMMessage) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code", 0);
+                params.putString("desc", "发送成功");
+                params.putString("infoCode", v2TIMMessage.getMsgID());
+                promise.resolve(params);
+            }
+        });
+    }
+
 
 }

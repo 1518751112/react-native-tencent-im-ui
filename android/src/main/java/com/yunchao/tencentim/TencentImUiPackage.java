@@ -15,6 +15,7 @@ public class TencentImUiPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> list = new ArrayList<>();
         list.add(new com.yunchao.tencentim.model.TencentIMModel(reactContext));
+        list.add(new com.yunchao.tencentim.model.TencentIMMonitor(reactContext));
         return list;
     }
 
