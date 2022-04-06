@@ -79,6 +79,8 @@ repositories {
         // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
     }
+    mavenCentral()
+    maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
     google()
     jcenter()
 }
@@ -89,7 +91,7 @@ dependencies {
 //    implementation 'com.tencent.imsdk:tuikit:5.0.6'
 //    implementation group: 'com.tencent.liteav', name: 'LiteAVSDK_TRTC', version: '7.2.8949'
     //修复react-native-txplayer包的依赖冲突
-    implementation('com.tencent.imsdk:tuikit:5.0.6') {
+    api ('com.tencent.imsdk:tuikit:5.1.50') {
         exclude group: 'com.tencent.liteav', module: 'LiteAVSDK_TRTC'
     }
     implementation 'com.google.code.gson:gson:2.8.6'

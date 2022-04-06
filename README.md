@@ -37,9 +37,9 @@ react-native 0.60 以上版本
 
 注意需要 --save 参数，react-native会自动link
 
-`$ npm install react-native-tencent-im-ui --save`
+`$ npm install @tg1518/react-native-tencent-im-ui --save`
 
-`$ yarn add react-native-tencent-im-ui `
+`$ yarn add @tg1518/react-native-tencent-im-ui `
 
 ### 4.2. link
 
@@ -203,6 +203,27 @@ export function TIMOn(event,ck){
 export function TIMOnRemove(){
 }
 
+/**
+ *
+ * @param groupID 群id
+ * @param count 获取数量 拉取消息的个数，不宜太多，会影响消息拉取的速度，这里建议一次拉取 20 个
+ * @param msgID 获取消息的起始消息，如果传 null，起始消息为会话的最新消息
+ * @returns {Promise<*>}
+ */
+export async function getGroupMessageList(groupID,count,msgID=null){
+
+}
+
+/**
+ * 发送群图片消息
+ * @param imagePath 本地图片路径
+ * @param receiver 消息接收者的 userID, 如果是发送 C2C 单聊消息，只需要指定 receiver 即可[二选一]。
+ * @param groupID 群聊id [二选一]
+ * @param priority 发送等级 0
+ */
+export async function sendGroupImageMessage(imagePath,receiver,groupID,priority=0){
+
+}
 ```
 
 ## 七、使用示例
