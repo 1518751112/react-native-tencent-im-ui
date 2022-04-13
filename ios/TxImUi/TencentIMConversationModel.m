@@ -8,11 +8,10 @@
 
 #import "TencentIMConversationModel.h"
 #import "TUIKit.h"
-#import <ImSDK/V2TIMManager.h>
-#import <ImSDK/TIMCallback.h>
+#import <ImSDK_Plus/V2TIMManager.h>
+#import <ImSDK_Plus/ImSDK_Plus.h>
 #import "TencentIMManager.h"
 #import "TUIConversationListController.h"
-#import "ConversationView.h"
 @implementation TencentIMConversationModel
 
 RCT_EXPORT_MODULE();

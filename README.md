@@ -10,10 +10,8 @@
 
 ## 一、支持功能
 
-1. 聊天列表功能
-
-2. 聊天功能
-3. 提供方法自己拼装组件
+1. 聊天功能
+2. 提供方法自己拼装组件
 
 ## 二、待支持的功能
 
@@ -79,53 +77,20 @@ react-native 0.60以上 使用的autolink，注意需要 --save 参数，react-n
 
 #### 4.2.2 ios 特别处理
 
-1. **在你自己的项目中的，AppDelegate.m**
+	
 
-	  ```object
-	
-	...
-	
-	// 引入头文件
-	
-	#import "ConversationController.h"
-	
-	...
-	
-	// 方法 didFinishLaunchingWithOptions 中修改
-	
-	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-	
-	...
-	
-	// 下面一行更改为
-	
-	// self.window.rootViewController = rootViewController;
-	
-	UINavigationController *nv = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-	
-	nv.navigationBar.hidden = YES;
-	
-	nv.delegate = self;
-	
-	self.window.rootViewController = nv;
-	
-	ConversationController *c = [ConversationController getInstance];
-	
-	[c initNc: nv];
-	
-	...
-	
 	```
 
 ## 五、示例 请参考 demo 文件夹
 注意，LiteAVSDK_TRTC不支持模拟器运行，请使用真机运行
 
-android demo 截图
+[comment]: <> (android demo 截图)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201002214658908.jpg#pic_center)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201002214658906.jpg#pic_center)
+[comment]: <> (![在这里插入图片描述]&#40;https://img-blog.csdnimg.cn/20201002214658908.jpg#pic_center&#41;)
 
-ios demo 截图（同上，忘记截图了）
+[comment]: <> (![在这里插入图片描述]&#40;https://img-blog.csdnimg.cn/20201002214658906.jpg#pic_center&#41;)
+
+[comment]: <> (ios demo 截图（同上，忘记截图了）)
 
 ##  六、接口
 

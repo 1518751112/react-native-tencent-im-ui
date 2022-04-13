@@ -8,8 +8,8 @@
 
 #import "TUIKit.h"
 #import <React/RCTViewManager.h>
-#import <ImSDK/V2TIMManager.h>
-#import <ImSDK/TIMCallback.h>
+#import <ImSDK_Plus/V2TIMManager.h>
+#import <ImSDK_Plus/TIMErrorCode.h>
 #import <React/RCTBridgeModule.h>
 
 @interface TencentIMConversationModel : RCTViewManager

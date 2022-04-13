@@ -8,11 +8,17 @@
 
 #import "TUIKit.h"
 #import <React/RCTViewManager.h>
-#import <ImSDK/V2TIMManager.h>
-#import <ImSDK/TIMCallback.h>
+#import <ImSDK_Plus/V2TIMManager.h>
+#import <ImSDK_Plus/ImSDK_Plus.h>
 #import <React/RCTBridgeModule.h>
+#import <ImSDK_Plus/V2TIMManager+Message.h>
+#import "TencentIMManager.h"
+#import "TencentIMMonitor.h"
+#import <React/RCTEventEmitter.h>
+@class TencentIMMonitor;
 
-@interface TencentIMModel : NSObject <RCTBridgeModule>
-
+@interface TencentIMModel : RCTEventEmitter <RCTBridgeModule>
+-(id) init;
+- (NSArray<NSString *> *)supportedEvents;
 @end
 

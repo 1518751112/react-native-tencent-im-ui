@@ -307,7 +307,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
 
     /**
-     *  发送群聊普通文本消息（最大支持 8KB）
+     *  发送高级消息（最大支持 8KB）
      * @param message 待发送的消息对象
      * @param receiver 消息接收者的 userID, 如果是发送 C2C 单聊消息，只需要指定 receiver 即可。
      * @param groupID 群聊id [二选一]
