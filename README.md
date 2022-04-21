@@ -95,7 +95,36 @@ react-native 0.60以上 使用的autolink，注意需要 --save 参数，react-n
 ##  六、接口
 
 ```javascript
+//事件列表
 
+/**
+ * 群消息
+ */
+const GROUP_MESSAGE = "groupMessage"
+/**
+ * 有用户进入群
+ */
+const ON_MEMBER_ENTER = "onMemberEnter";
+/**
+ * 有用户离开群
+ */
+const ON_MEMBER_LEAVE = "onMemberLeave";
+/**
+ * 有成员被踢出群
+ */
+const ON_MEMBER_KICKED = "onMemberKicked";
+/**
+ * 群被解散
+ */
+const ON_GROUP_DISMISSED = "onGroupDismissed";
+/**
+ * 指定管理员身份
+ */
+const ON_GRANT_ADMINISTRATOR = "onGrantAdministrator";
+/**
+ * 取消管理员身份
+ */
+const ON_REVOKE_ADMINISTRATOR = "onRevokeAdministrator";
 /**
  * 初始化
  * @param sdkAppId

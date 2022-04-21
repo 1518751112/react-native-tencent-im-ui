@@ -9,6 +9,7 @@
 #import "TUIKit.h"
 #import <React/RCTViewManager.h>
 #import <ImSDK_Plus/V2TIMManager.h>
+#import <ImSDK_Plus/V2TIMManager+Group.h>
 #import <ImSDK_Plus/ImSDK_Plus.h>
 #import <React/RCTBridgeModule.h>
 #import <ImSDK_Plus/V2TIMManager+Message.h>

@@ -21,6 +21,7 @@ RCT_EXPORT_MODULE(TencentIMModel);
     TencentIMMonitor * m = [[TencentIMMonitor alloc] init:self];
     monitor =m;
     [tm addAdvancedMsgListener:m];
+    [tm addGroupListener:m];
     
     return self;
 }
@@ -28,7 +29,9 @@ RCT_EXPORT_MODULE(TencentIMModel);
 
 - (NSArray<NSString *> *)supportedEvents
 {
-  return @[@"groupMessage"];
+  return @[@"groupMessage",@"onMemberEnter",@"onMemberLeave",@"onMemberKicked",
+           @"onGroupDismissed",@"onGrantAdministrator",@"onRevokeAdministrator"
+  ];
 }
 
 /**
@@ -57,11 +60,23 @@ RCT_EXPORT_METHOD(login:(NSString *)identify
   [tm loginWithIdentify:identify
                        userSig:userSig
                        succ:^{
-                         resolve(@{
-                           @"code": @(0),
-                           @"msg": @"登录成功!",
-                           @"module": @"success",
-                         });
+      V2TIMManager *txManager = [V2TIMManager sharedInstance];
+      [txManager getUsersInfo:@[identify] succ:^(NSArray<V2TIMUserFullInfo *> *infoList) {
+          V2TIMUserFullInfo *info =infoList[0];
+          resolve(@{
+            @"code": @(0),
+            @"msg": @"登录成功!",
+            @"module": @"success",
+            @"userInfo":@{
+                    @"userID":info.userID,
+                    @"nickName":info.nickName? info.nickName:@"",
+                    @"avatarPic":info.faceURL
+            }
+          });
+      } fail:^(int code, NSString *desc) {
+          reject([NSString stringWithFormat:@"%d", code], desc, nil);
+      }];
+                         
                        }
                        fail:^(int code, NSString *msg) {
                          reject([NSString stringWithFormat:@"%d", code], msg, nil);
@@ -150,4 +165,42 @@ RCT_EXPORT_METHOD(getGroupHistoryMessageList:(NSString *)groupID
     }];
 }
 
+RCT_EXPORT_METHOD(getGroupOnlineMemberCount:(NSString *)groupID
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+{
+    V2TIMManager *txManager = [V2TIMManager sharedInstance];
+    
+    [txManager getGroupOnlineMemberCount:groupID succ:^(NSInteger count) {
+        resolve(@{
+            @"code":@0,
+            @"number":[NSNumber numberWithInteger:count]
+                });
+    } fail:^(int code, NSString *desc) {
+        reject([NSString stringWithFormat:@"%@", @(code)], desc, nil);
+    }];
+}
+
+RCT_EXPORT_METHOD(setSelfInfo:(NSDictionary *)config
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+{
+    V2TIMManager *txManager = [V2TIMManager sharedInstance];
+    V2TIMUserFullInfo * info = [[V2TIMUserFullInfo alloc] init];
+    if(config[@"nickName"]){
+        [info setNickName:config[@"nickName"]];
+    }
+    if(config[@"avatarPic"]){
+        [info setFaceURL:config[@"avatarPic"]];
+    }
+    [txManager setSelfInfo:info succ:^{
+        resolve(@{
+            @"code":@0,
+            @"desc":@"修改成功"
+                });
+    } fail:^(int code, NSString *desc) {
+        NSLog(@"出问题了:%@",desc);
+        reject([NSString stringWithFormat:@"%@", @(code)], desc, nil);
+    }];
+}
 @end

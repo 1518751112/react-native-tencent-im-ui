@@ -22,6 +22,8 @@ public class MessageT {
         params.putString("msgID",msgID);
         params.putString("timestamp",msg.getTimestamp()+"");
         params.putString("userID",userID);
+        params.putString("avatarPic",msg.getFaceUrl());
+        params.putString("nickName",msg.getNickName());
         params.putString("sort",msg.getSeq()+"");
         params.putInt("type",msg.getElemType());
 
