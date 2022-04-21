@@ -7,28 +7,12 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMManager;
-import com.tencent.imsdk.v2.V2TIMCallback;
-import com.tencent.imsdk.v2.V2TIMConversation;
-import com.tencent.imsdk.v2.V2TIMGroupMemberInfo;
-import com.tencent.imsdk.v2.V2TIMManager;
-import com.tencent.imsdk.v2.V2TIMMessage;
-import com.tencent.imsdk.v2.V2TIMMessageManager;
-import com.tencent.imsdk.v2.V2TIMSendCallback;
-import com.tencent.imsdk.v2.V2TIMSimpleMsgListener;
-import com.tencent.imsdk.v2.V2TIMUserInfo;
-import com.tencent.imsdk.v2.V2TIMValueCallback;
+import com.tencent.imsdk.v2.*;
 import com.tencent.qcloud.tim.uikit.TUIKit;
 import com.tencent.qcloud.tim.uikit.base.IMEventListener;
 import com.tencent.qcloud.tim.uikit.base.IUIKitCallBack;
@@ -39,15 +23,15 @@ import com.yunchao.tencentim.IMApplication;
 import com.yunchao.tencentim.activity.ChatActivity;
 import com.yunchao.tencentim.common.Constants;
 import com.yunchao.tencentim.utils.MessageT;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.LogRecord;
 
 
 public class TencentIMModel extends ReactContextBaseJavaModule {
+
+    private V2TIMUserFullInfo userInfo;
 
     public TencentIMModel(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -71,7 +55,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit(eventName, params);
+                .emit(eventName, params);
     }
 
     @ReactMethod
@@ -133,11 +117,37 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
             @Override
             public void onSuccess(Object data) {
-                Map<String, Object> result = new HashMap<>(3);
-                result.put("module", "success");
-                result.put("code", 0);
-                result.put("desc", "登录成功");
-                promise.resolve(data);
+                List<String> users = Arrays.asList(userId);
+
+                V2TIMManager.getInstance().getUsersInfo(users,new V2TIMValueCallback<List<V2TIMUserFullInfo>>(){
+                    @Override
+                    public void onError(int code, String desc) {
+                        Map<String, Object> result = new HashMap<>(3);
+                        result.put("code", code);
+                        result.put("desc", desc);
+                        promise.reject(result.toString(), new RuntimeException(desc));
+                    }
+
+                    @Override
+                    public void onSuccess(List<V2TIMUserFullInfo> v2TIMUserFullInfos) {
+                        V2TIMUserFullInfo info = v2TIMUserFullInfos.get(0);
+                        //更新信息
+                        userInfo = info;
+                        WritableMap params = Arguments.createMap();
+
+                        params.putString("module", "success");
+                        params.putInt("code", 0);
+                        params.putString("desc", "登录成功");
+                        WritableMap userInfo = Arguments.createMap();
+
+                        userInfo.putString("userID",info.getUserID());
+                        userInfo.putString("nickName",info.getNickName());
+                        userInfo.putString("avatarPic",info.getFaceUrl());
+                        params.putMap("userInfo",userInfo);
+                        promise.resolve(params);
+                    }
+                });
+
             }
         });
     }
@@ -342,4 +352,65 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         });
     }
 
+    /**
+     * 获取直播群在线人数
+     * @param groupID 群id
+     * @param promise 回调
+     */
+    @ReactMethod
+    public void getGroupOnlineMemberCount(final String groupID,final Promise promise){
+
+        V2TIMGroupManager v2TIMGroupManager = V2TIMManager.getGroupManager();
+        v2TIMGroupManager.getGroupOnlineMemberCount(groupID,new V2TIMValueCallback<Integer>(){
+
+            @Override
+            public void onError(int code, String desc) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code", code);
+                params.putString("desc", desc);
+                promise.reject(params.toString(), new RuntimeException(desc));
+            }
+
+            @Override
+            public void onSuccess(Integer integer) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code", 0);
+                params.putInt("number", integer);
+                promise.resolve(params);
+            }
+        });
+    }
+
+    /**
+     * 更新个人信息
+     * @param info 信息
+     * @param promise 回调
+     */
+    @ReactMethod
+    public void setSelfInfo(final  @NotNull ReadableMap info, final Promise promise){
+        if (info.hasKey("nickName")){
+            userInfo.setNickname(info.getString("nickName"));
+        }
+        if (info.hasKey("avatarPic")){
+            userInfo.setFaceUrl(info.getString("avatarPic"));
+        }
+        V2TIMManager v2TIMManager = V2TIMManager.getInstance();
+        v2TIMManager.setSelfInfo(userInfo, new V2TIMCallback() {
+            @Override
+            public void onError(int code, String desc) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",code);
+                params.putString("desc",desc);
+                promise.reject(params.toString(),new RuntimeException(desc));
+            }
+
+            @Override
+            public void onSuccess() {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",0);
+                params.putString("desc","修改成功");
+                promise.resolve(params);
+            }
+        });
+    }
 }
