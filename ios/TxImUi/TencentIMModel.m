@@ -22,7 +22,7 @@ RCT_EXPORT_MODULE(TencentIMModel);
     monitor =m;
     [tm addAdvancedMsgListener:m];
     [tm addGroupListener:m];
-    
+
     return self;
 }
 
@@ -70,13 +70,13 @@ RCT_EXPORT_METHOD(login:(NSString *)identify
             @"userInfo":@{
                     @"userID":info.userID,
                     @"nickName":info.nickName? info.nickName:@"",
-                    @"avatarPic":info.faceURL
+                    @"avatarPic":info.faceURL? info.faceURL:@""
             }
           });
       } fail:^(int code, NSString *desc) {
           reject([NSString stringWithFormat:@"%d", code], desc, nil);
       }];
-                         
+
                        }
                        fail:^(int code, NSString *msg) {
                          reject([NSString stringWithFormat:@"%d", code], msg, nil);
@@ -132,7 +132,7 @@ RCT_EXPORT_METHOD(sendGroupImageMessage:(NSString *)imagePath
   TencentIMManager *tm = [TencentIMManager getInstance];
     V2TIMManager *V2tm = [V2TIMManager sharedInstance];
     V2TIMMessage *message = [V2tm createImageMessage:imagePath];
-    
+
     [tm sendMessage:message receiver:receiver to:groupID priority:priority succ:^{
         resolve(@{@"code":@0,@"desc":@"发送成功"});
     } fail:^(int code, NSString *desc) {
@@ -170,7 +170,7 @@ RCT_EXPORT_METHOD(getGroupOnlineMemberCount:(NSString *)groupID
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     V2TIMManager *txManager = [V2TIMManager sharedInstance];
-    
+
     [txManager getGroupOnlineMemberCount:groupID succ:^(NSInteger count) {
         resolve(@{
             @"code":@0,
