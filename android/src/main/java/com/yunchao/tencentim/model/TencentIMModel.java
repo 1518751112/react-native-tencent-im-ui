@@ -219,7 +219,13 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
                 WritableMap params = Arguments.createMap();
                 params.putInt("code", 0);
                 params.putString("desc", "发送成功");
-                params.putString("infoCode", v2TIMMessage.getMsgID());
+                params.putString("msgID", v2TIMMessage.getMsgID());
+//                params.putString("timestamp",v2TIMMessage.getTimestamp()+"");
+//                params.putString("userID",v2TIMMessage.getSender());
+//                params.putString("avatarPic",v2TIMMessage.getFaceUrl());
+//                params.putString("nickName",v2TIMMessage.getNickName());
+//                params.putString("sort",v2TIMMessage.getSeq()+"");
+//                params.putInt("type",v2TIMMessage.getElemType());
                 promise.resolve(params);
             }
         });
@@ -251,26 +257,33 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
                 @Override
                 public void onSuccess(List<V2TIMMessage> v2TIMMessages) {
-                    v2TIMMessageManager.getGroupHistoryMessageList(groupID, count, v2TIMMessages.get(0), new V2TIMValueCallback<List<V2TIMMessage>>() {
-                        @Override
-                        public void onError(int code, String desc) {
-                            WritableMap params = Arguments.createMap();
-                            params.putInt("code", code);
-                            params.putString("desc", desc);
-                            promise.reject(params.toString(), new RuntimeException(desc));
-                        }
-
-                        @Override
-                        public void onSuccess(List<V2TIMMessage> v2TIMMessages) {
-                            WritableArray arr = Arguments.createArray();
-
-                            for (V2TIMMessage v2T : v2TIMMessages) {
-                                arr.pushMap(MessageT.MessageSort(v2T));
+                    if (v2TIMMessages.size()>0){
+                        v2TIMMessageManager.getGroupHistoryMessageList(groupID, count, v2TIMMessages.get(0), new V2TIMValueCallback<List<V2TIMMessage>>() {
+                            @Override
+                            public void onError(int code, String desc) {
+                                WritableMap params = Arguments.createMap();
+                                params.putInt("code", code);
+                                params.putString("desc", desc);
+                                promise.reject(params.toString(), new RuntimeException(desc));
                             }
-                            promise.resolve(arr);
 
-                        }
-                    });
+                            @Override
+                            public void onSuccess(List<V2TIMMessage> v2TIMMessages) {
+                                WritableArray arr = Arguments.createArray();
+
+                                for (V2TIMMessage v2T : v2TIMMessages) {
+                                    arr.pushMap(MessageT.MessageSort(v2T));
+                                }
+                                promise.resolve(arr);
+
+                            }
+                        });
+                    }else{
+                        //没有就返回空数组
+                        WritableArray arr = Arguments.createArray();
+                        promise.resolve(arr);
+                    }
+
 
                 }
             });
@@ -346,7 +359,14 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
                 WritableMap params = Arguments.createMap();
                 params.putInt("code", 0);
                 params.putString("desc", "发送成功");
-                params.putString("infoCode", v2TIMMessage.getMsgID());
+
+                params.putString("msgID", v2TIMMessage.getMsgID());
+//                params.putString("timestamp",v2TIMMessage.getTimestamp()+"");
+//                params.putString("userID",v2TIMMessage.getSender());
+//                params.putString("avatarPic",v2TIMMessage.getFaceUrl());
+//                params.putString("nickName",v2TIMMessage.getNickName());
+//                params.putString("sort",v2TIMMessage.getSeq()+"");
+//                params.putInt("type",v2TIMMessage.getElemType());
                 promise.resolve(params);
             }
         });
@@ -388,14 +408,15 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void setSelfInfo(final  @NotNull ReadableMap info, final Promise promise){
+        V2TIMUserFullInfo userConfig = new V2TIMUserFullInfo();
         if (info.hasKey("nickName")){
-            userInfo.setNickname(info.getString("nickName"));
+            userConfig.setNickname(info.getString("nickName"));
         }
         if (info.hasKey("avatarPic")){
-            userInfo.setFaceUrl(info.getString("avatarPic"));
+            userConfig.setFaceUrl(info.getString("avatarPic"));
         }
         V2TIMManager v2TIMManager = V2TIMManager.getInstance();
-        v2TIMManager.setSelfInfo(userInfo, new V2TIMCallback() {
+        v2TIMManager.setSelfInfo(userConfig, new V2TIMCallback() {
             @Override
             public void onError(int code, String desc) {
                 WritableMap params = Arguments.createMap();
