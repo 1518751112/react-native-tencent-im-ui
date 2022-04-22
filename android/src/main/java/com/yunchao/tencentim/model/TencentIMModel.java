@@ -65,7 +65,6 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i("dd","测试"+sdkAppId);
                     try {
                         TUIKit.init(IMApplication.getContext(), sdkAppId, getConfigs());
 
@@ -80,8 +79,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void logout(final Promise promise) {
-        final String loginUser = TIMManager.getInstance().getLoginUser();
-        TIMManager.getInstance().logout(new TIMCallBack() {
+        V2TIMManager.getInstance().logout(new V2TIMCallback() {
             @Override
             public void onError(int i, String s) {Map<String, Object> result = new HashMap<>(3);
                 result.put("module", "onError");
@@ -93,11 +91,11 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
             @Override
             public void onSuccess() {
-                Map<String, Object> result = new HashMap<>(3);
-                result.put("module", "onSuccess");
-                result.put("code", 0);
-                result.put("desc", "登出成功");
-                promise.resolve(result);
+                WritableMap params = Arguments.createMap();
+                params.putString("module", "onSuccess");
+                params.putInt("code", 0);
+                params.putString("desc", "登出成功");
+                promise.resolve(params);
             }
         });
     }
@@ -105,18 +103,17 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void login(final String userId, String userSig, final Promise promise) {
-        TUIKit.login(userId, userSig, new IUIKitCallBack() {
+        V2TIMManager.getInstance().login(userId, userSig, new V2TIMCallback() {
             @Override
-            public void onError(String module, final int code, final String desc) {
-                Map<String, Object> result = new HashMap<>(3);
-                result.put("module", module);
+            public void onError(int code, String desc) {
+                Map<String, Object> result = new HashMap<>(2);
                 result.put("code", code);
                 result.put("desc", desc);
                 promise.reject(result.toString(), new RuntimeException(desc));
             }
 
             @Override
-            public void onSuccess(Object data) {
+            public void onSuccess() {
                 List<String> users = Arrays.asList(userId);
 
                 V2TIMManager.getInstance().getUsersInfo(users,new V2TIMValueCallback<List<V2TIMUserFullInfo>>(){
@@ -147,7 +144,6 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
                         promise.resolve(params);
                     }
                 });
-
             }
         });
     }
