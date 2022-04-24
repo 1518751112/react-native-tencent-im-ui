@@ -132,7 +132,7 @@ RCT_EXPORT_METHOD(sendGroupImageMessage:(NSString *)imagePath
   TencentIMManager *tm = [TencentIMManager getInstance];
     V2TIMManager *V2tm = [V2TIMManager sharedInstance];
     V2TIMMessage *message = [V2tm createImageMessage:imagePath];
-
+    NSLog(@"图片%@群id:%@",imagePath,groupID);
     [tm sendMessage:message receiver:receiver to:groupID priority:priority succ:^{
         resolve(@{@"code":@0,@"desc":@"发送成功"});
     } fail:^(int code, NSString *desc) {

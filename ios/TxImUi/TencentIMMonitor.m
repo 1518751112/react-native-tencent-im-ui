@@ -121,7 +121,7 @@
     [userInfo setObject:opUser.nickName? opUser.nickName:@"" forKey:@"nickName"];
     [userInfo setObject:opUser.faceURL? opUser.faceURL:@"" forKey:@"avatarPic"];
 
-    [params setObject:groupID forKey:@"msgID"];
+    [params setObject:groupID forKey:@"groupID"];
     [params setObject:userInfo forKey:@"userInfo"];
 
     [m sendEventWithName:@"onGroupDismissed" body:params];
@@ -177,4 +177,35 @@
 
     [m sendEventWithName:@"onRevokeAdministrator" body:params];
 }
+
+/// 某成员被拉入某群（该群所有的成员都能收到）
+- (void)onMemberInvited:(NSString *)groupID opUser:(V2TIMGroupMemberInfo *)opUser memberList:(NSArray<V2TIMGroupMemberInfo *>*)memberList{}
+
+/// 有成员被踢出某群（该群所有的成员都能收到）
+- (void)onMemberKicked:(NSString *)groupID opUser:(V2TIMGroupMemberInfo *)opUser memberList:(NSArray<V2TIMGroupMemberInfo *>*)memberList{
+    
+}
+
+/// 某成员信息发生变更（该群所有的成员都能收到）。会议群（Meeting）和直播群（AVChatRoom）默认无此回调，如需回调请提交工单配置
+- (void)onMemberInfoChanged:(NSString *)groupID changeInfoList:(NSArray <V2TIMGroupMemberChangeInfo *> *)changeInfoList{}
+/// 有新的群创建（创建者能收到，应用于多端消息同步的场景）
+- (void)onGroupCreated:(NSString *)groupID{}
+- (void)onGroupRecycled:(NSString *)groupID opUser:(V2TIMGroupMemberInfo *)opUser{}
+/// 某个已加入的群的信息被修改了（该群所有的成员都能收到）
+- (void)onGroupInfoChanged:(NSString *)groupID changeInfoList:(NSArray <V2TIMGroupChangeInfo *> *)changeInfoList{}
+
+/// 某个已加入的群的属性被修改了，会返回所在群组的所有属性（该群所有的成员都能收到）
+- (void)onGroupAttributeChanged:(NSString *)groupID attributes:(NSMutableDictionary<NSString *,NSString *> *)attributes{}
+
+/// 有新的加群请求（只有群主和管理员会收到）
+- (void)onReceiveJoinApplication:(NSString *)groupID member:(V2TIMGroupMemberInfo *)member opReason:(NSString *)opReason{}
+
+/// 加群请求已经被群主或管理员处理了（只有申请人能够收到）
+- (void)onApplicationProcessed:(NSString *)groupID opUser:(V2TIMGroupMemberInfo *)opUser opResult:(BOOL)isAgreeJoin opReason:(NSString *)opReason{}
+
+/// 自己主动退出群组（主要用于多端同步，直播群（AVChatRoom）不支持）
+- (void)onQuitFromGroup:(NSString *)groupID{}
+
+/// 收到 RESTAPI 下发的自定义系统消息
+- (void)onReceiveRESTCustomData:(NSString *)groupID data:(NSData *)data{}
 @end
