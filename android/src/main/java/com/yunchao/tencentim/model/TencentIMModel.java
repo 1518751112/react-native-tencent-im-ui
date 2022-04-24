@@ -9,18 +9,8 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.*;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.tencent.imsdk.TIMCallBack;
-import com.tencent.imsdk.TIMConversationType;
-import com.tencent.imsdk.TIMManager;
 import com.tencent.imsdk.v2.*;
-import com.tencent.qcloud.tim.uikit.TUIKit;
-import com.tencent.qcloud.tim.uikit.base.IMEventListener;
-import com.tencent.qcloud.tim.uikit.base.IUIKitCallBack;
-import com.tencent.qcloud.tim.uikit.config.GeneralConfig;
-import com.tencent.qcloud.tim.uikit.config.TUIKitConfigs;
-import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 import com.yunchao.tencentim.IMApplication;
-import com.yunchao.tencentim.activity.ChatActivity;
 import com.yunchao.tencentim.common.Constants;
 import com.yunchao.tencentim.utils.MessageT;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +34,14 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         return "TencentIMModel";
     }
 
-    public TUIKitConfigs getConfigs() {
+/*    public TUIKitConfigs getConfigs() {
         GeneralConfig config = new GeneralConfig();
         // 显示对方是否已读的view将会展示
         config.setShowRead(true);
         config.setAppCacheDir(IMApplication.getContext().getFilesDir().getPath());
         TUIKit.getConfigs().setGeneralConfig(config);
         return TUIKit.getConfigs();
-    }
+    }*/
 
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -59,14 +49,57 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initSdk(final int sdkAppId) {
+    public void initSdk(final int sdkAppId,final Promise promise) {
         final Activity activity = getCurrentActivity();
         if (null != activity) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        TUIKit.init(IMApplication.getContext(), sdkAppId, getConfigs());
+                        V2TIMSDKConfig config = new V2TIMSDKConfig();
+                        // 3. 指定 log 输出级别，详情请参考 SDKConfig。
+                        config.setLogLevel(V2TIMSDKConfig.V2TIM_LOG_INFO);
+                        V2TIMManager.getInstance().initSDK(IMApplication.getContext(), sdkAppId, config, new V2TIMSDKListener() {
+                            @Override
+                            public void onConnecting() {
+                                super.onConnecting();
+                            }
+
+                            @Override
+                            public void onConnectSuccess() {
+                                WritableMap params = Arguments.createMap();
+                                params.putInt("code", 0);
+                                params.putString("desc", "已经成功连接到腾讯云服务器");
+                                promise.resolve(params);
+
+                                super.onConnectSuccess();
+                            }
+
+                            @Override
+                            public void onConnectFailed(int code, String error) {
+                                Map<String, Object> result = new HashMap<>(2);
+                                result.put("code", -9999);
+                                result.put("desc", "连接腾讯云服务器失败");
+                                promise.reject(result.toString(),new RuntimeException(error));
+
+                                super.onConnectFailed(code, error);
+                            }
+
+                            @Override
+                            public void onKickedOffline() {
+                                super.onKickedOffline();
+                            }
+
+                            @Override
+                            public void onUserSigExpired() {
+                                super.onUserSigExpired();
+                            }
+
+                            @Override
+                            public void onSelfInfoUpdated(V2TIMUserFullInfo info) {
+                                super.onSelfInfoUpdated(info);
+                            }
+                        });
 
                     }catch (Exception e){
                         Log.e("初始化失败",e.getMessage());
@@ -148,7 +181,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
         });
     }
 
-    @ReactMethod
+/*    @ReactMethod
     public void startChatView(String userId, String conTitle, int type) {
         final Activity activity = getCurrentActivity();
         if (activity != null) {
@@ -166,7 +199,7 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);
         }
-    }
+    }*/
 
     @ReactMethod
     public void joinGroup(final String groupID,final Promise promise) {
