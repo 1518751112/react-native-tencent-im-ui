@@ -21,8 +21,14 @@
 /// 收到新消息
 - (void)onRecvNewMessage:(V2TIMMessage *)msg{
     NSMutableDictionary * body = [TencentIMMonitor MessageSort:msg];
-
-    [m sendEventWithName:@"groupMessage" body:body];
+    @try{
+        [m sendEventWithName:@"groupMessage" body:body];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
+    
+    
 }
 
 /// 收到消息已读回执（仅单聊有效）
@@ -97,7 +103,12 @@
     [params setObject:groupID forKey:@"msgID"];
     [params setObject:userList forKey:@"userList"];
 
-    [m sendEventWithName:@"onMemberEnter" body:params];
+    @try{
+        [m sendEventWithName:@"onMemberEnter" body:params];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
 }
 
 /// 有成员离开群（该群所有的成员都能收到）
@@ -109,7 +120,12 @@
     [params setObject:groupID forKey:@"msgID"];
     [params setObject:member.userID forKey:@"userID"];
 
-    [m sendEventWithName:@"onMemberLeave" body:params];
+    @try{
+        [m sendEventWithName:@"onMemberLeave" body:params];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
 }
 
 /// 某个已加入的群被解散了（该群所有的成员都能收到）
@@ -124,7 +140,12 @@
     [params setObject:groupID forKey:@"groupID"];
     [params setObject:userInfo forKey:@"userInfo"];
 
-    [m sendEventWithName:@"onGroupDismissed" body:params];
+    @try{
+        [m sendEventWithName:@"onGroupDismissed" body:params];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
 }
 
 /// 指定管理员身份
@@ -149,7 +170,12 @@
     [params setObject:handler forKey:@"opUser"];
     [params setObject:userList forKey:@"userList"];
 
-    [m sendEventWithName:@"onGrantAdministrator" body:params];
+    @try{
+        [m sendEventWithName:@"onGrantAdministrator" body:params];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
 }
 
 /// 取消管理员身份
@@ -175,7 +201,12 @@
     [params setObject:handler forKey:@"opUser"];
     [params setObject:userList forKey:@"userList"];
 
-    [m sendEventWithName:@"onRevokeAdministrator" body:params];
+    @try{
+        [m sendEventWithName:@"onRevokeAdministrator" body:params];
+    }
+    @catch(NSException * e){
+        NSLog(@"发生事件报错了:%@",e.name);
+    }
 }
 
 /// 某成员被拉入某群（该群所有的成员都能收到）
