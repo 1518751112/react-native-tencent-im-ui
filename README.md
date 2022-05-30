@@ -204,7 +204,7 @@ export function TIMOnRemove(){
  * @param msgID 获取消息的起始消息，如果传 null，起始消息为会话的最新消息
  * @returns {Promise<*>}
  */
-export async function getGroupMessageList(groupID,count,msgID=null){
+export async function TIMGetGroupMessageList(groupID,count,msgID=null){
 
 }
 
@@ -215,7 +215,7 @@ export async function getGroupMessageList(groupID,count,msgID=null){
  * @param groupID 群聊id [二选一]
  * @param priority 发送等级 0
  */
-export async function sendGroupImageMessage(imagePath,receiver,groupID,priority=0){
+export async function TIMSendGroupImageMessage(imagePath,receiver,groupID,priority=0){
 
 }
 
@@ -224,7 +224,7 @@ export async function sendGroupImageMessage(imagePath,receiver,groupID,priority=
  * @param groupID 群id
  * @returns 回调
  */
-export async function getGroupOnlineMemberCount(groupID){
+export async function TIMGetGroupOnlineCount(groupID){
 }
 ```
 
