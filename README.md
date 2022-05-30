@@ -47,37 +47,37 @@ react-native 0.60以上 使用的autolink，注意需要 --save 参数，react-n
 
 1.  **需要在AndroidManifest.xml增加 activity**
 
-	`<activity android:name="com.yunchao.tencentim.activity.ChatActivity" />`
+    `<activity android:name="com.yunchao.tencentim.activity.ChatActivity" />`
 
 1.  **在你自己的项目中的，android/app/src/main/java/<你的包名>/MainApplication.java 中onCreate()方法中增加如下**
 
-	```java
-	
-	@Override
-	
-	public void onCreate() {
-	
-	super.onCreate();
-	
-	SoLoader.init(this, /* native exopackage */ false);
-	
-	...
-	
-	// 然后添加这一行，这里很重要，initSdk中使用到这个，初始化必须在主Application中初始化，否则会出现线程错误问题
-	
-	IMApplication.setContext(this,  MainActivity.class);
-	
-	...
-	
-	}
-	
-	```
+    ```java
+    
+    @Override
+    
+    public void onCreate() {
+    
+    super.onCreate();
+    
+    SoLoader.init(this, /* native exopackage */ false);
+    
+    ...
+    
+    // 然后添加这一行，这里很重要，initSdk中使用到这个，初始化必须在主Application中初始化，否则会出现线程错误问题
+    
+    IMApplication.setContext(this,  MainActivity.class);
+    
+    ...
+    
+    }
+    
+    ```
 
 1. demo 中增加的有华为push的示例（使用的低版本的push，高版本的总是提示安装hms-core，有点烦），完整的请参考腾讯im-sdk内的demo
 
 #### 4.2.2 ios 特别处理
 
-	
+
 
 	```
 
@@ -218,6 +218,14 @@ export async function getGroupMessageList(groupID,count,msgID=null){
 export async function sendGroupImageMessage(imagePath,receiver,groupID,priority=0){
 
 }
+
+/**
+ * 获取直播群在线人数
+ * @param groupID 群id
+ * @returns 回调
+ */
+export async function getGroupOnlineMemberCount(groupID){
+}
 ```
 
 ## 七、使用示例
@@ -252,49 +260,49 @@ TIMLogin(userId, userSig).then(res=>{
 
 ```
 
-从其他界面跳转打开会话
+[comment]: <> (从其他界面跳转打开会话)
 
-```javascript
+[comment]: <> (```javascript)
 
-import {TIMConversationModel, TIMInitSdk, TIMLogin, TIMLogout, TIMStartChat} from 'react-native-tencent-im-ui';
+[comment]: <> (import {TIMConversationModel, TIMInitSdk, TIMLogin, TIMLogout, TIMStartChat} from 'react-native-tencent-im-ui';)
 
-// 从其他界面跳转打开会话
+[comment]: <> (// 从其他界面跳转打开会话)
 
-TIMStartChat(userId, "xxx聊天", 1);
+[comment]: <> (TIMStartChat&#40;userId, "xxx聊天", 1&#41;;)
 
-```
+[comment]: <> (```)
 
-展示聊天列表界面
+[comment]: <> (展示聊天列表界面)
 
-```javascript
+[comment]: <> (```javascript)
 
-// 展示聊天列表界面
+[comment]: <> (// 展示聊天列表界面)
 
-import {TIMConversationModel, TIMInitSdk, TIMLogin, TIMLogout, TIMStartChat} from 'react-native-tencent-im-ui';
+[comment]: <> (import {TIMConversationModel, TIMInitSdk, TIMLogin, TIMLogout, TIMStartChat} from 'react-native-tencent-im-ui';)
 
-import React from "react";
+[comment]: <> (import React from "react";)
 
-import {
+[comment]: <> (import {)
 
-SafeAreaView,
+[comment]: <> (SafeAreaView,)
 
-StatusBar,
+[comment]: <> (StatusBar,)
 
-} from 'react-native';
+[comment]: <> (} from 'react-native';)
 
-export default class Conversation extends React.Component{
+[comment]: <> (export default class Conversation extends React.Component{)
 
-  render() {
+[comment]: <> (  render&#40;&#41; {)
 
-    return <SafeAreaView style={{flex:1, paddingTop: (Platform.OS === 'ios' ?  10 : StatusBar.currentHeight)}}>
+[comment]: <> (    return <SafeAreaView style={{flex:1, paddingTop: &#40;Platform.OS === 'ios' ?  10 : StatusBar.currentHeight&#41;}}>)
 
-      <TIMConversationModel style={{ flex: 1 }}  {...this.props} />
+[comment]: <> (      <TIMConversationModel style={{ flex: 1 }}  {...this.props} />)
 
-}
+[comment]: <> (})
 
-}
+[comment]: <> (})
 
-```
+[comment]: <> (```)
 
 ### 参考鸣谢项目
 
