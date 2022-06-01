@@ -203,4 +203,14 @@ RCT_EXPORT_METHOD(setSelfInfo:(NSDictionary *)config
         reject([NSString stringWithFormat:@"%@", @(code)], desc, nil);
     }];
 }
+
+RCT_EXPORT_METHOD(quitGroup:(NSString *)groupID resolve:(RCTPromiseResolveBlock)resolve
+rejecter:(RCTPromiseRejectBlock)reject){
+    V2TIMManager *txManager = [V2TIMManager sharedInstance];
+    [txManager quitGroup:groupID succ:^{
+        resolve(@{@"code":@0,@"desc":@"退出群组成功"});
+    } fail:^(int code, NSString *desc) {
+        reject([NSString stringWithFormat:@"%@", @(code)], desc, nil);
+    }];
+}
 @end

@@ -463,4 +463,30 @@ public class TencentIMModel extends ReactContextBaseJavaModule {
             }
         });
     }
+
+    /**
+     * 退出群组
+     * @param groupID 群组id
+     * @param promise 回调
+     */
+    @ReactMethod
+    public void quitGroup(final String groupID,final Promise promise) {
+        V2TIMManager.getInstance().quitGroup(groupID, new V2TIMCallback() {
+            @Override
+            public void onError(int code, String desc) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",code);
+                params.putString("desc",desc);
+                promise.reject(params.toString(),new RuntimeException(desc));
+            }
+
+            @Override
+            public void onSuccess() {
+                WritableMap params = Arguments.createMap();
+                params.putInt("code",0);
+                params.putString("desc","退出群组成功");
+                promise.resolve(params);
+            }
+        });
+    }
 }

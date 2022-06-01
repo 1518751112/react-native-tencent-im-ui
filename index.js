@@ -8,7 +8,8 @@ import {
     on,
     remove,
     sendGroupTextMessage,
-    getGroupMessageList, sendGroupImageMessage, getGroupOnlineMemberCount, setUserInfo
+    getGroupMessageList, sendGroupImageMessage, getGroupOnlineMemberCount, setUserInfo,
+    quitGroup
 } from './lib/TencentIMModel';
 
 export const TIMConversationModel = ConversationModel;
@@ -24,6 +25,7 @@ export const TIMSendGroupTextMessage = sendGroupTextMessage;
 export const TIMSendGroupImageMessage = sendGroupImageMessage;
 export const TIMGetGroupOnlineCount = getGroupOnlineMemberCount;
 export const TIMSetUserInfo = setUserInfo;
+export const TIMQuitGroup = quitGroup;
 
 export default {
     TIMConversationModel,
@@ -39,4 +41,5 @@ export default {
     TIMSendGroupImageMessage: TIMSendGroupImageMessage,
     TIMGetGroupOnlineCount: TIMGetGroupOnlineCount,
     TIMSetUserInfo: TIMSetUserInfo,
+    TIMQuitGroup:TIMQuitGroup
 };
