@@ -226,6 +226,14 @@ export async function TIMSendGroupImageMessage(imagePath,receiver,groupID,priori
  */
 export async function TIMGetGroupOnlineCount(groupID){
 }
+
+/**
+ * 退出群
+ * @param groupID 群id
+ * @returns 回调
+ */
+export async function TIMQuitGroup(groupID){
+}
 ```
 
 ## 七、使用示例
